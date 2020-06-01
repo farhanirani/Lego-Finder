@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    form.was-validated(action="/add-set" method="POST")
+        .form-group
+            label.h1 Set Name
+            input.form-control(type='text', name='body', required='')
+        .d-flex.justify-content-center
+            button.btn.btn-primary.btn-block(type='submit') Add Set
+    

@@ -1,0 +1,43 @@
+extends layout
+
+block content
+
+    label.h1 Set Name: #{set.title}
+
+    br
+    br
+    table.table
+        thead
+            tr
+                th(scope='col') Number
+                th(scope='col') ID
+        each a, _ in posts
+            tbody
+                tr
+                    th(scope='row').text-primary #{a.number}
+                    td.text-primary #{a.title}
+                    td 
+                        a.text-danger(href='/delete-piece/'+a._id+'/'+set._id) delete
+
+
+    br
+    br  
+    form.was-validated.bg-secondary(action="/add-piece/"+set._id+"/"+set.title method="POST")
+        br
+        .container
+            .form-group
+                label.h3 Add piece
+                input.form-control(type='number', name='body',placeholder='Piece ID', required='')
+            .form-group
+                label.h3 Number of pieces
+                input.form-control(type='number', name='no',,placeholder='Number of Pieces', required='')
+            br
+            .d-flex.justify-content-center
+                button.btn.btn-primary.btn-block(type='submit') Add piece
+            br
+
+    br
+    br
+    form(action="/delete-set/"+set._id method="POST")
+        button.btn.btn-danger(type='submit', value='delete') DELETE SET
+    br

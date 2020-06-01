@@ -17,9 +17,10 @@ app.use(bodyParser.json())
 
 //bring in models
 let Post = require('./models/post')
+let Set = require('./models/set')
 
 app.get('/', (req, res) => {
-    let query = Post.find({}).sort({$natural:-1})
+    let query = Set.find({}).sort({$natural:-1})
     query.exec(function(err, postsres){
         if(err){
             console.log(err)
@@ -33,46 +34,48 @@ app.get('/', (req, res) => {
 
 
 app.get('/posts/:id', function(req, res){
-    Post.findById(req.params.id, (err, post) => {
-        res.render('edit_post', {
-            post: post
+    Set.findById(req.params.id, (err, set) => {
+        let query = Post.find({ whichSet : req.params.id }).sort({$natural:-1})
+        query.exec( (err, postres) => {
+            res.render('set-info', {
+                set: set,
+                posts: postres
+            })
         })
     })
 })
 
-app.post('/posts/:id', (req,res) => {
-    let post = {};
-    post.title = req.body.title
-    post.whichSet = req.body.body
-    
-    let query = { _id:req.params.id }
-
-    Post.updateOne(query, post, (err) => {
-        if(err) {
-            console.log(err)
-            return
-        } else {
-            res.redirect('/')
-        }
-    })
-
-})
-
-app.get('/add-piece', (req, res) => {
-    res.render('add-piece')
-})
-
-app.post('/add-piece', (req, res) => {
+app.post('/add-piece/:id/:setname', (req, res) => {
     let post = new Post()
-    post.title = req.body.title
-    post.whichSet = req.body.body
+    post.title = req.body.body
+    post.number = req.body.no
+    post.whichSet = req.params.id
+    post.setName = req.params.setname
     
     post.save(function(err){ //to add to db
         if(err) {
             console.log(err)
             return
         } else {
-            res.redirect('/add-piece')
+            res.redirect('/posts/'+req.params.id)
+        }
+    })
+})
+
+app.get('/add-set', (req, res) => {
+    res.render('add-set')
+})
+
+app.post('/add-set', (req, res) => {
+    let set = new Set()
+    set.title = req.body.body
+    
+    set.save(function(err){ //to add to db
+        if(err) {
+            console.log(err)
+            return
+        } else {
+            res.redirect('/')
         }
     })
 })
@@ -90,12 +93,20 @@ app.post('/search', (req, res) => {
     })
 })
 
-app.post('/delete/:id',(req, res) => {
-    Post.findByIdAndDelete(req.params.id, (err) => {
+app.post('/delete-set/:id',(req, res) => {
+    Set.findByIdAndDelete(req.params.id, (err) => {
         if(err)
             console.log(err)
     })
     res.redirect('/')
+})
+
+app.get('/delete-piece/:id/:setid',(req, res) => {
+    Post.findByIdAndDelete(req.params.id, (err) => {
+        if(err)
+            console.log(err)
+    })
+    res.redirect('/posts/'+req.params.setid)
 })
 
 

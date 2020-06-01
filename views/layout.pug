@@ -10,13 +10,13 @@ html
     body
         nav.navbar.navbar-expand.navbar-light
 
-            a.navbar-brand(href='/') FINDER
+            a.navbar-brand(href='/') Home
 
             ul.navbar-nav
                 li.nav-item
-                    a.nav-link.text-primary(href='/add-piece') Add Pieces
+                    a.nav-link.text-primary(href='/add-set') Add Set
 
-            ul.navbar-nav.form-inline
+            ul.navbar-nav.form-inline.ml-auto
                 li.nav-item
                     form(action="/search" method="POST")
                         input.form-control(type='search',name="search", placeholder='Piece ID', aria-label='Search')

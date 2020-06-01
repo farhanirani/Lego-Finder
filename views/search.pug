@@ -1,8 +1,18 @@
 extends layout
 
 block content
-    .list-group
+
+    table.table
+        thead
+            tr
+                th(scope='col') Set
+                th(scope='col') ID
+                th(scope='col') Quantity
         each a, _ in posts
-            br
-            a.list-group-item(href="/posts/"+a._id)= a.title
-            a.list-group-item.text-danger(href="/posts/"+a._id)= a.whichSet
+            tbody
+                tr
+                    th(scope='row')
+                        a.text-danger(href="/posts/"+a.whichSet)= a.setName
+                    td #{a.title}
+                    td #{a.number}
+

@@ -9,6 +9,14 @@ let postSchema = mongoose.Schema({
     whichSet:{
         type: String,
         required: true
+    },
+    setName:{
+        type: String,
+        required: true
+    },
+    number:{
+        type: Number,
+        required: true
     }
 })
 
