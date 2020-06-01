@@ -11,4 +11,9 @@ block content
             textarea.form-control(type='text', name='body', required='')= post.whichSet
         .d-flex.justify-content-center
             button.btn.btn-primary.btn-block(type='submit', value='submit') EDIT
+        br
+        br
+    form(action="/delete/"+post._id method="POST")
+        .d-flex.justify-content-center
+            button.btn.btn-danger.btn-block(type='submit', value='delete') DELETE
     br

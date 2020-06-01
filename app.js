@@ -90,6 +90,14 @@ app.post('/search', (req, res) => {
     })
 })
 
+app.post('/delete/:id',(req, res) => {
+    Post.findByIdAndDelete(req.params.id, (err) => {
+        if(err)
+            console.log(err)
+    })
+    res.redirect('/')
+})
+
 
 //start server
 const PORT = process.env.PORT || 3000
