@@ -9,20 +9,26 @@ block content
     table.table
         thead
             tr
-                th(scope='col') Number
                 th(scope='col') ID
+                th(scope='col') Number
+                th(scope='col') Update number
+                th(scope='col') #
         each a, _ in posts
             tbody
                 tr
-                    th(scope='row').text-primary #{a.number}
                     td.text-primary #{a.title}
+                    form(action='/update-piece-number/'+a._id+'/'+set._id method="POST")
+                        td
+                            input(type='number', name='updatednumber', value=a.number , required='')
+                        td
+                            button.btn.btn-sm.btn-outline-success(type='submit') Update 
                     td 
                         a.text-danger(href='/delete-piece/'+a._id+'/'+set._id) delete
 
 
     br
     br  
-    form.was-validated.bg-secondary(action="/add-piece/"+set._id+"/"+set.title method="POST")
+    form.was-validated.border.border-primary(action="/add-piece/"+set._id+"/"+set.title method="POST")
         br
         .container
             .form-group
@@ -39,5 +45,5 @@ block content
     br
     br
     form(action="/delete-set/"+set._id method="POST")
-        button.btn.btn-danger(type='submit', value='delete') DELETE SET
+        button.btn.btn-danger(type='submit') DELETE SET
     br

@@ -109,6 +109,23 @@ app.get('/delete-piece/:id/:setid',(req, res) => {
     res.redirect('/posts/'+req.params.setid)
 })
 
+app.post('/update-piece-number/:id/:setid', (req,res) => {
+    Post.findById(req.params.id, (err, post) => {
+        if(err){
+            console.log('error')
+        } else {
+            post.number = req.body.updatednumber
+            Post.findByIdAndUpdate( req.params.id, post, (err) => {
+                if(err){
+                    console.log('error')
+                } else {
+                    res.redirect('/posts/'+req.params.setid)
+                }
+            })
+        }
+    })
+})
+
 
 //start server
 const PORT = process.env.PORT || 3000
