@@ -25,7 +25,11 @@ block content
                     td 
                         a.text-danger(href='/delete-piece/'+a._id+'/'+set._id) delete
 
-
+    br
+    br  
+    form(action='/upload-csv/'+set.id method='POST')
+        input(type='file', name='filename')
+        button.btn.btn-success(type='submit') Upload
     br
     br  
     form.was-validated.border.border-primary(action="/add-piece/"+set._id+"/"+set.title method="POST")
@@ -37,7 +41,6 @@ block content
             .form-group
                 label.h3 Number of pieces
                 input.form-control(type='number', name='no',,placeholder='Number of Pieces', required='')
-            br
             .d-flex.justify-content-center
                 button.btn.btn-primary.btn-block(type='submit') Add piece
             br

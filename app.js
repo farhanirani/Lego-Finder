@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+const csv = require('fast-csv')
 require('dotenv').config()
 
 
@@ -19,6 +20,7 @@ app.use(bodyParser.json())
 let Post = require('./models/post')
 let Set = require('./models/set')
 
+// Home page
 app.get('/', (req, res) => {
     let query = Set.find({}).sort({$natural:-1})
     query.exec(function(err, postsres){
@@ -32,7 +34,7 @@ app.get('/', (req, res) => {
     })
 })
 
-
+// Set page
 app.get('/sets/:id', function(req, res){
     Set.findById(req.params.id, (err, set) => {
         let query = Post.find({ whichSet : req.params.id }).sort({$natural:-1})
@@ -45,23 +47,8 @@ app.get('/sets/:id', function(req, res){
     })
 })
 
-app.post('/add-piece/:id/:setname', (req, res) => {
-    let post = new Post()
-    post.title = req.body.body
-    post.number = req.body.no
-    post.whichSet = req.params.id
-    post.setName = req.params.setname
-    
-    post.save(function(err){ //to add to db
-        if(err) {
-            console.log(err)
-            return
-        } else {
-            res.redirect('/sets/'+req.params.id)
-        }
-    })
-})
-
+// ---------------------------------------- //
+// Adding a new Set
 app.get('/add-set', (req, res) => {
     res.render('add-set')
 })
@@ -79,7 +66,27 @@ app.post('/add-set', (req, res) => {
         }
     })
 })
+// ---------------------------------------- //
 
+// Add a new piece from the Set-info page
+app.post('/add-piece/:id/:setname', (req, res) => {
+    let post = new Post()
+    post.title = req.body.body
+    post.number = req.body.no
+    post.whichSet = req.params.id
+    post.setName = req.params.setname
+    
+    post.save(function(err){ //to add to db
+        if(err) {
+            console.log(err)
+            return
+        } else {
+            res.redirect('/sets/'+req.params.id)
+        }
+    })
+})
+
+// SEARCH
 app.post('/search', (req, res) => {
     let query = Post.find({ title: { $regex: req.body.search }}).sort({ $natural:-1 })
     query.exec(function(err, postsres){
@@ -93,6 +100,8 @@ app.post('/search', (req, res) => {
     })
 })
 
+// DELETING STUFF
+// xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx //
 app.post('/delete-set/:id',(req, res) => {
     Set.findByIdAndDelete(req.params.id, (err) => {
         if(err)
@@ -108,6 +117,7 @@ app.get('/delete-piece/:id/:setid',(req, res) => {
     })
     res.redirect('/sets/'+req.params.setid)
 })
+// xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx //
 
 app.post('/update-piece-number/:id/:setid', (req,res) => {
     Post.findById(req.params.id, (err, post) => {
@@ -125,6 +135,16 @@ app.post('/update-piece-number/:id/:setid', (req,res) => {
         }
     })
 })
+
+app.post('/upload-csv/:id',(req,res) => {
+    console.log(req.params.id)
+})
+
+
+
+
+
+
 
 
 //start server
