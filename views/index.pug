@@ -4,4 +4,4 @@ block content
     .list-group
         each a, _ in posts
             br
-            a.list-group-item.text-danger(href="/sets/"+a._id)= a.title
+            a.list-group-item.text-danger.text-decoration-none.border-0.shadow(href="/sets/"+a._id)= a.title
