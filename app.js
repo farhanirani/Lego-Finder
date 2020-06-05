@@ -141,31 +141,34 @@ app.post("/upload-set/:id/:setname", (req, res) => {
         var x = Math.floor((Math.random() * 1000) + 1);
 
         // create this file
-        req.files.file.mv('./files/'+req.files.file.name+x, (err)=>{
+        req.files.file.mv('./files/'+x+req.files.file.name, (err)=>{
             if(err) console.log(err) 
         })
 
         // reading the file, somehow the cl fixed a bug
         console.log(process.cwd())
-        fs.readFile('./files/'+req.files.file.name+x, 'utf8', (err, data) => {
+        fs.readFile('./files/'+x+req.files.file.name, 'utf8', (err, data) => {
             if(err) {console.log(err)}
             else{
-                split_lines = data.split("\n");
+                split_lines = data.split("\r");
 
                 for (i = 0; i < split_lines.length; i++) {
-                    split_lines_parts = split_lines[i].split(";");
+                    split_lines_parts = split_lines[i].split(",");
+                    // console.log(split_lines_parts)
                     let post = new Post()
                     post.title = split_lines_parts[0]
                     post.number = split_lines_parts[1]
                     post.whichSet = req.params.id
                     post.setName = req.params.setname
-                    post.save()
+                    post.save((err) => {
+                        if (err) {console.log('error')}
+                    })
                 }
 
             }
         })
 
-        fs.unlink('./files/'+req.files.file.name+x, (err) => {
+        fs.unlink('./files/'+x+req.files.file.name, (err) => {
             if (err) return console.log(err)
         })
 
