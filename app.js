@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 })
 
 
-app.get('/posts/:id', function(req, res){
+app.get('/sets/:id', function(req, res){
     Set.findById(req.params.id, (err, set) => {
         let query = Post.find({ whichSet : req.params.id }).sort({$natural:-1})
         query.exec( (err, postres) => {
@@ -57,7 +57,7 @@ app.post('/add-piece/:id/:setname', (req, res) => {
             console.log(err)
             return
         } else {
-            res.redirect('/posts/'+req.params.id)
+            res.redirect('/sets/'+req.params.id)
         }
     })
 })
@@ -106,7 +106,7 @@ app.get('/delete-piece/:id/:setid',(req, res) => {
         if(err)
             console.log(err)
     })
-    res.redirect('/posts/'+req.params.setid)
+    res.redirect('/sets/'+req.params.setid)
 })
 
 app.post('/update-piece-number/:id/:setid', (req,res) => {
@@ -119,7 +119,7 @@ app.post('/update-piece-number/:id/:setid', (req,res) => {
                 if(err){
                     console.log('error')
                 } else {
-                    res.redirect('/posts/'+req.params.setid)
+                    res.redirect('/sets/'+req.params.setid)
                 }
             })
         }
