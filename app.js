@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const upload = require('express-fileupload')
 const fs = require('fs')
+const path = require('path')
 
 require('dotenv').config()
 
@@ -13,6 +14,8 @@ app.set('view engine','pug')
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(upload())
+app.use("/files", express.static(path.join(__dirname, 'files')));
+
 
 //bring in models
 let Post = require('./models/post')
@@ -68,16 +71,27 @@ app.post('/add-set', (req, res) => {
 
 // Add a new piece from the Set-info page
 app.post('/add-piece/:id/:setname', (req, res) => {
+    
     let post = new Post()
     post.title = req.body.body
     post.number = req.body.no
     post.whichSet = req.params.id
     post.setName = req.params.setname
+
+    if(req.files) {
+        var x = Math.floor((Math.random() * 1000) + 1);
+        // create this file
+        req.files.file.mv('./files/'+x+req.files.file.name, (err)=>{
+            if(err) console.log(err) 
+        })
+        console.log(process.cwd())
+        post.picture = '/files/'+x+req.files.file.name 
+    }
     
     post.save(function(err){ //to add to db
         if(err) {
             console.log(err)
-            return
+            res.redirect('/sets/'+req.params.id)
         } else {
             res.redirect('/sets/'+req.params.id)
         }
@@ -156,8 +170,12 @@ app.post("/upload-set/:id/:setname", (req, res) => {
                     split_lines_parts = split_lines[i].split(",");
                     // console.log(split_lines_parts)
                     let post = new Post()
-                    post.title = split_lines_parts[0]
-                    post.number = split_lines_parts[1]
+                    post.picture = split_lines_parts[0]
+                    
+                    temp = split_lines_parts[1].split(' ')
+                    post.title = temp[2]
+                    post.number = temp[0]
+
                     post.whichSet = req.params.id
                     post.setName = req.params.setname
                     post.save((err) => {

@@ -17,6 +17,10 @@ let postSchema = mongoose.Schema({
     number:{
         type: Number,
         required: true
+    },
+    picture:{
+        type: String,
+        required: false
     }
 })
 

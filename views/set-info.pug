@@ -6,9 +6,10 @@ block content
 
     br
     br
-    table.table
+    table.table.table-sm
         thead
             tr
+                th.w-25(scope='col') Image
                 th(scope='col') ID
                 th(scope='col') Number
                 th(scope='col') Update number
@@ -16,10 +17,12 @@ block content
         each a, _ in posts
             tbody
                 tr
+                    td
+                        img.img-thumbnail(src=a.picture)
                     td.text-primary #{a.title}
                     form(action='/update-piece-number/'+a._id+'/'+set._id method="POST")
                         td
-                            input(type='number', name='updatednumber', value=a.number , required='')
+                            input.col-xs-2(type='number', name='updatednumber', value=a.number , required='')
                         td
                             button.btn.btn-sm.btn-outline-success(type='submit') Update 
                     td 
@@ -29,23 +32,30 @@ block content
     br  
 
     
-    form.d-flex.justify-content-around.shadow.p-4(action='/upload-set/'+set._id+"/"+set.title method='POST', enctype="multipart/form-data")
+    form.shadow.p-4(action='/upload-set/'+set._id+"/"+set.title method='POST', enctype="multipart/form-data")
         p.h3 CSV
-        input(type='file', name='file', required)
+        br
+        .h5 Has to be link , number x id
+        input.col-12.border.border-lght.p-2(type='file', name='file', required)
+        br
+        br  
         button.btn.btn-sm.btn-success(type='submit') Upload
     
 
 
     br
     br  
-    form.was-validated.shadow-lg.p-3(action="/add-piece/"+set._id+"/"+set.title method="POST")
+    form.shadow-lg.p-3(action="/add-piece/"+set._id+"/"+set.title method="POST", enctype="multipart/form-data")
         .container
             .form-group
                 label.h3 Add piece
-                input.form-control(type='number', name='body',placeholder='Piece ID', required='')
+                input.form-control(type='number', name='body',placeholder='Piece ID')
             .form-group
                 label.h3 Number of pieces
-                input.form-control(type='number', name='no',,placeholder='Number of Pieces', required='')
+                input.form-control(type='number', name='no',,placeholder='Number of Pieces')
+            .form-group
+                label.h3 Add Image
+                input.col-12.border.border-lght.p-2(type='file', name='file')
             .d-flex.justify-content-center
                 button.btn.btn-primary.btn-block(type='submit') Add piece
 
