@@ -51,11 +51,6 @@ app.get('/sets/:id', function(req, res){
 })
 
 // ---------------------------------------- //
-// Adding a new Set
-app.get('/add-set', (req, res) => {
-    res.render('add-set')
-})
-
 app.post('/add-set', (req, res) => {
     let set = new Set()
     set.title = req.body.body

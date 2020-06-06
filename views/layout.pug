@@ -12,9 +12,11 @@ html
 
             a.navbar-brand(href='/') Home
 
-            ul.navbar-nav
+            ul.navbar-nav.form-inline
                 li.nav-item
-                    a.nav-link.text-primary(href='/add-set') Add Set
+                    form(action="/add-set" method="POST")
+                        input.form-control(type='text', name='body', placeholder='Set ID', required='')
+                        button.btn.btn-primary(type='submit') Add Set
 
             ul.navbar-nav.form-inline.ml-auto
                 li.nav-item
