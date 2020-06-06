@@ -7,6 +7,8 @@ const path = require('path')
 
 require('dotenv').config()
 
+var errors = ''
+
 
 //init app
 const app = express()
@@ -115,6 +117,10 @@ app.post('/search', (req, res) => {
 // DELETING STUFF
 // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx //
 app.post('/delete-set/:id',(req, res) => {
+    Post.deleteMany({ whichSet: req.params.id }, (err) => {
+        if(err)
+            console.log(err)
+    })
     Set.findByIdAndDelete(req.params.id, (err) => {
         if(err)
             console.log(err)
@@ -148,51 +154,93 @@ app.post('/update-piece-number/:id/:setid', (req,res) => {
     })
 })
 
+
+
+// ******************************************************************* //
 // Upload an entire set
-app.post("/upload-set/:id/:setname", (req, res) => {
+app.post("/upload-set/:id/:setname",async (req, res) => {
+
+    check = false
+
     if (req.files){
 
         var x = Math.floor((Math.random() * 1000) + 1);
 
         // create this file
-        req.files.file.mv('./files/'+x+req.files.file.name, (err)=>{
-            if(err) console.log(err) 
-        })
+        await req.files.file.mv('./files/'+x+req.files.file.name)
 
-        // reading the file, somehow the cl fixed a bug
+        // reading the file, somehow the consolelog fixed a bug
         console.log(process.cwd())
+
         fs.readFile('./files/'+x+req.files.file.name, 'utf8', (err, data) => {
-            if(err) {console.log(err)}
-            else{
-                split_lines = data.split("\r");
+            if(err) {
+                console.log(err)
+            } else {
+                fs.unlink('./files/'+x+req.files.file.name, async (err) => {
+                    if (err) {
+                        return console.log(err)
+                    } else {
+                        var a = await operationsOnTheData(data, req.params.id, req.params.setname)
 
-                for (i = 0; i < split_lines.length; i++) {
-                    split_lines_parts = split_lines[i].split(",");
-                    // console.log(split_lines_parts)
-                    let post = new Post()
-                    post.picture = split_lines_parts[0]
-                    
-                    temp = split_lines_parts[1].split(' ')
-                    post.title = temp[2]
-                    post.number = temp[0]
+                        if (a) {
+                            if (errors == 0) {
+                                res.redirect('/sets/'+req.params.id)
+                            } else {
+                                res.redirect('/error/'+errors+'/'+req.params.id)
+                            }
+                        }
 
-                    post.whichSet = req.params.id
-                    post.setName = req.params.setname
-                    post.save((err) => {
-                        if (err) {console.log('error')}
-                    })
-                }
-
+                    }
+                })
             }
         })
-
-        fs.unlink('./files/'+x+req.files.file.name, (err) => {
-            if (err) return console.log(err)
-        })
-
     } 
-    res.redirect('/sets/'+req.params.id)
 });
+
+app.get('/error/:msg/:id', (req,res) => {
+    res.render('error',{
+        msg: req.params.msg,
+        id: req.params.id
+    })
+})
+
+async function operationsOnTheData(data, whichSet, setName) {
+    split_lines = data.split("\n");
+
+    for (i = 0; i < split_lines.length-1; i++) {
+        split_lines_parts = split_lines[i].split(",");
+        // console.log(split_lines_parts)
+        let post = new Post()
+        
+        var temp = '';
+        temp = split_lines_parts[0].split(' ')
+        post.picture = temp[0]
+        // console.log(temp[0])
+
+        var temp = '';
+        temp = split_lines_parts[1].split(' ')
+        post.number = Number(temp[0])
+        post.title = temp[2]
+        // console.log(Number(temp[0]) + '  ' + temp[2])
+        
+        post.whichSet = whichSet
+        post.setName = setName
+        // console.log(post.picture)
+        // console.log(post.number+' '+post.title)
+        post.save((err) => {
+            if (err) {
+                errors += ' ' + post.title
+            }
+        })
+    }
+
+    if( i == split_lines.length - 1) {
+        return true
+    }
+}
+
+// ******************************************************************* //
+
 
 
 
