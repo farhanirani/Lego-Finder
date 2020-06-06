@@ -229,6 +229,7 @@ async function operationsOnTheData(data, whichSet, setName) {
         // console.log(post.number+' '+post.title)
         post.save((err) => {
             if (err) {
+                console.log(post.title)
                 errors += ' ' + post.title
             }
         })
